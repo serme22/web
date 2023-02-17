@@ -74,10 +74,11 @@ let characteristicCache = null;
 function requestBluetoothDevice() {
     log('Requesting bluetooth device...');
 
-    return navigator.bluetooth.requestDevice({
+    return navigator.bluetooth. ({
         //filters: [],
         optionalServices:[],
-        acceptAllDevices: true
+        filter: [{ namePrefix: "S_Lock" }]
+        //acceptAllDevices: true
     }).
         then(device => {
             log('"' + device.name + '" bluetooth device selected');
