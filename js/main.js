@@ -81,12 +81,13 @@ function requestBluetoothDevice() {
         ]*/
         //,optionalServices: [ "8f7a103b-0bce-46ea-8d52-543b2175fabd" ]        
         acceptAllDevices: true
-        ,optionalServices: ["battery_service"]
     }).
         then(device => {
             log('"' + device.name + '" bluetooth device selected');
             deviceCache = device;
 
+            console.log(device);
+            
             deviceCache.addEventListener('gattserverdisconnected', handleDisconnection);
 
             return deviceCache;
