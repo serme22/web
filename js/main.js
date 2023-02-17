@@ -77,7 +77,7 @@ function requestBluetoothDevice() {
     return navigator.bluetooth.requestDevice({
         //filters: [],
         filters: [{ namePrefix: "S_Lock" }],
-        optionalServices: [ "8F7a103b-0bce-46ea-8d52-543b2175fabd" ]
+        optionalServices: [ "8f7a103b-0bce-46ea-8d52-543b2175fabd" ]
         //acceptAllDevices: true
     }).
         then(device => {
