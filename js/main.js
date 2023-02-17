@@ -43,6 +43,23 @@ function connect() {
 // Disconnect from the connected device
 function disconnect() {
     //
+    if (deviceCache) {
+        log('Disconnecting from "' + deviceCache.name + '" bluetooth device...');
+        deviceCache.removeEventListener('gattserverdisconnected',
+            handleDisconnection);
+
+        if (deviceCache.gatt.connected) {
+            deviceCache.gatt.disconnect();
+            log('"' + deviceCache.name + '" bluetooth device disconnected');
+        }
+        else {
+            log('"' + deviceCache.name +
+                '" bluetooth device is already disconnected');
+        }
+    }
+
+    characteristicCache = null;
+    deviceCache = null;
 }
 
 // Send data to the connected device
@@ -58,12 +75,15 @@ function requestBluetoothDevice() {
     log('Requesting bluetooth device...');
 
     return navigator.bluetooth.requestDevice({
-        //  filters: [{ services: [0xFFE0] }],
+        filters: [],
+        optionalServices:[],
         acceptAllDevices: true
     }).
         then(device => {
             log('"' + device.name + '" bluetooth device selected');
             deviceCache = device;
+
+            deviceCache.addEventListener('gattserverdisconnected', handleDisconnection);
 
             return deviceCache;
         });
@@ -102,4 +122,25 @@ function connectDeviceAndCacheCharacteristic(device) {
 function log(data, type = '') {
     terminalContainer.insertAdjacentHTML('beforeend',
         '<div' + (type ? ' class="' + type + '"' : '') + '>' + data + '</div>');
+}
+
+
+// Enable the characteristic changes notification
+function startNotifications(characteristic) {
+    log('Starting notifications...');
+
+    return characteristic.startNotifications().
+        then(() => {
+            log('Notifications started');
+        });
+}
+
+function handleDisconnection(event) {
+    let device = event.target;
+
+    log('"' + device.name + '" bluetooth device disconnected, trying to reconnect...');
+
+    connectDeviceAndCacheCharacteristic(device).
+        then(characteristic => startNotifications(characteristic)).
+        catch(error => log(error));
 }
