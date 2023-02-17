@@ -28,7 +28,7 @@ sendForm.addEventListener('submit', function (event) {
 // Launch Bluetooth device chooser and connect to the selected
 function connect() {
     //
-
+    console.log("connect butto clicked");
     return (deviceCache ? Promise.resolve(deviceCache) :
         requestBluetoothDevice()).
         then(device => connectDeviceAndCacheCharacteristic(device)).
@@ -52,49 +52,49 @@ let characteristicCache = null;
 
 function requestBluetoothDevice() {
     log('Requesting bluetooth device...');
-  
+
     return navigator.bluetooth.requestDevice({
-      filters: [{services: [0xFFE0]}],
+        filters: [{ services: [0xFFE0] }],
     }).
         then(device => {
-          log('"' + device.name + '" bluetooth device selected');
-          deviceCache = device;
-  
-          return deviceCache;
+            log('"' + device.name + '" bluetooth device selected');
+            deviceCache = device;
+
+            return deviceCache;
         });
-  }
+}
 
-  // Connect to the device specified, get service and characteristic
+// Connect to the device specified, get service and characteristic
 
-  function connectDeviceAndCacheCharacteristic(device) {
+function connectDeviceAndCacheCharacteristic(device) {
     if (device.gatt.connected && characteristicCache) {
-      return Promise.resolve(characteristicCache);
+        return Promise.resolve(characteristicCache);
     }
-  
+
     log('Connecting to GATT server...');
-  
+
     return device.gatt.connect().
         then(server => {
-          log('GATT server connected, getting service...');
-  
-          return server.getPrimaryService(0xFFE0);
+            log('GATT server connected, getting service...');
+
+            return server.getPrimaryService(0xFFE0);
         }).
         then(service => {
-          log('Service found, getting characteristic...');
-  
-          return service.getCharacteristic(0xFFE1);
+            log('Service found, getting characteristic...');
+
+            return service.getCharacteristic(0xFFE1);
         }).
         then(characteristic => {
-          log('Characteristic found');
-          characteristicCache = characteristic;
-  
-          return characteristicCache;
-        });
-  }
+            log('Characteristic found');
+            characteristicCache = characteristic;
 
-  
+            return characteristicCache;
+        });
+}
+
+
 // Output to terminal
 function log(data, type = '') {
     terminalContainer.insertAdjacentHTML('beforeend',
         '<div' + (type ? ' class="' + type + '"' : '') + '>' + data + '</div>');
-  }
+}
