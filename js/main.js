@@ -25,6 +25,10 @@ sendForm.addEventListener('submit', function (event) {
     inputField.focus();     // Focus on text field
 });
 
+
+// Selected device object cache
+let deviceCache = null;
+
 // Launch Bluetooth device chooser and connect to the selected
 function connect() {
     //
