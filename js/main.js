@@ -75,7 +75,7 @@ function requestBluetoothDevice() {
     log('Requesting bluetooth device...');
 
     return navigator.bluetooth.requestDevice({
-        //filters: [],
+        filters: [{name: "S_Lock 205 160224"}],
         /*filters: [{ namePrefix: "S_Lock" },
         { services: ["8f7a103b-0bce-46ea-8d52-543b2175fabd"] }
         ]*/
@@ -107,6 +107,7 @@ function connectDeviceAndCacheCharacteristic(device) {
         then(server => {
             log('GATT server connected, getting service...');
 
+            console.log(server);
             return server.getPrimaryService("8f7a103b-0bce-46ea-8d52-543b2175fabd");
         }).
         then(service => {
